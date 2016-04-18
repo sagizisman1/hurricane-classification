@@ -10,14 +10,15 @@ from sys import argv
 from BeautifulSoup import BeautifulSoup
 from urllib2 import urlopen
 import urllib
+import urllib2
 import logging
-
 
 def createSoup(url):
     html = urlopen(url).read()
     return BeautifulSoup(html)
 
 def getUrlImages(url, localDir):
+
     soup = createSoup(url)
 
     # Find images
@@ -27,14 +28,22 @@ def getUrlImages(url, localDir):
     # Get the source
     imageCount = 0
     imageLinks = [each.get('src') for each in images]
+    #pdb.set_trace()
     for each in imageLinks:
-        #Add and counter:
+         #Add and counter:
         imageCount = imageCount+1
-        localFile = each.split('/')[-1]
+
+        try:
+        	newSoup = createSoup('https://en.wikipedia.org/wiki/File:' + each.split('-')[-1])
+        	imgPath = 'https:' + newSoup.findAll("div","fullMedia")[0].a['href']
+        except urllib2.HTTPError:
+        	imgPath = 'https:' + each
+        
+        localFile = imgPath.split('/')[-1]
         localPath = localDir + '/' + localFile
         
         try:
-           urllib.urlretrieve('https:' + each, localPath)
+           urllib.urlretrieve(imgPath, localPath)
         except Exception, e:
                 logging.warn("error downloading %s: %s" % (localFile, e))
         print "Image #: ", imageCount, ": Filepath: ",each," copied to: ", localPath, "\n\n"
