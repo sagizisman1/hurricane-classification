@@ -8,9 +8,11 @@
 #  5) Compress the image using PCA compression
 #  6) Write the resulting CSV file to disk
 
-#Input argument: path to images
-#Output: A ready-to-model CSV file 
-#Dependencies: numpy, scikit learn
+#Input argument: relative path to images, target image pixel, image format (i.e. RGB) 
+#Output: A ready-to-model CSV file
+
+#Example call: Python imgPreprocesses.py hurr2006/test 500 RGB 
+#Dependencies: numpy, scikit learn, PIL
 
 #Sagi Zisman 4/18/2016
 
@@ -20,7 +22,6 @@ from skimage import io
 import numpy as np
 import Image
 from sklearn.decomposition import PCA
-import pdb
 
 def fetchImg(imgName,imgDir):
 	filename = os.path.join(imgDir,imgName)
